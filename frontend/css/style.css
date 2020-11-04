@@ -1,6 +1,6 @@
 /*-- Body Reset --*/
 body {
-  background: url('https://www.babybedding.com/images/fabric/mint-watercolor-fabric_large.jpg') no-repeat center center fixed;
+  background: rgb(136, 208, 177);
 -webkit-background-size: cover;
 -moz-background-size: cover;
 background-size: cover;
@@ -10,7 +10,7 @@ font-family: 'Montserrat', sans-serif;
 color: #000000;
 }
   
-  /*============= TOP BAR =============*/
+/*============= TOP BAR =============*/
   .top-bar{
     height: 4rem ;
       padding: 1rem 0;
@@ -19,9 +19,9 @@ color: #000000;
     .top-bar a {
       color: white;
       text-decoration: none;
-      font-size: 1.3rem;
+      font-size: 1.0rem;
     }
-    .top-bar h1 {
+    .top-bar .login-main-text h1 {
       font-family: "Arial Black", Gadget, sans-serif;
       font-size: 40px;
       letter-spacing: 2.8px;
@@ -33,37 +33,15 @@ color: #000000;
       font-variant: normal;
       text-transform: none;
     }
-    
+
   /*============= NAVIGATION =============*/
   
-  
-  
-  /*============= CAROUSEL =============*/
-  
-  
-  
-  /*---Change Carousel Transition Speed --*/
-  
-  
-  /*-- Carousel Content --*/
-  
-  
-  
-  /*===== FIXED BACKGROUND IMG =====*/
-  
-  
-  
-  /*-- Emoji Navbar --*/
   
   
   
   /*============= FOOTER =============*/
   
-  
-  
-  /*============= SOCKET =============*/
-  
-  
+
   
   /*============= MEDIA QUERIES =============*/
   
@@ -130,3 +108,71 @@ color: #000000;
 	transform: translateZ(0);
 	will-change: transform;
   }
+  /*-- Fixed Login--*/
+  body {
+    font-family: "Lato", sans-serif;
+}
+
+.main-head{
+    height: 150px;
+    background: #FFF;
+}
+
+.sidenav {
+    height: 100%;
+    background: url('https://www.babybedding.com/images/fabric/mint-watercolor-fabric_large.jpg');
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+
+.main {
+    padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+}
+
+@media screen and (max-width: 450px) {
+    .login-form{
+        margin-top: 10%;
+    }
+
+    .register-form{
+        margin-top: 10%;
+    }
+}
+
+@media screen and (min-width: 768px){
+    .main{
+        margin-left: 40%; 
+    }
+
+    .sidenav{
+        width: 40%;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+    }
+
+    .login-form{
+        margin-top: 80%;
+    }
+
+    .register-form{
+        margin-top: 20%;
+    }
+}
+
+
+.login-main-text{
+    margin-top: 20%;
+    padding: 60px;
+    color: black;
+}
+
+.login-main-text h2{
+    font-weight: 300;
+}
