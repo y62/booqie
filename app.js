@@ -11,12 +11,8 @@ app.get("/", (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + 'frontend/test.html')
+    res.sendFile(__dirname + 'frontend/index.html')
 })
-
-app.get("/", (req, res) => {
-    return res.sendFile(__dirname + '/frontend/loginModal.html');
-});
 
 app.listen(port, () => {
     console.log("Server is running on port:", port)
