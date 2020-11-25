@@ -1,10 +1,13 @@
 const express = require("express");
+
 const mysql = require('mysql');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const path = require('path');
 const ejs = require('ejs');
 
+
+const nodemon = require("nodemon");
 const app = express();
 
 const port = 8080;
@@ -14,9 +17,9 @@ app.use(express.static("frontend"));
 
 //____________________________________________________________________________
 
-/*app.get("/", (req, res) => {
+/*app.get("/test", (req, res) => {
     return res.sendFile(__dirname + "/frontend/test.html");
-});*/
+}); */
 
 const connection = mysql.createConnection({
     host: 'database-2.c8e4q2gd2tmb.eu-central-1.rds.amazonaws.com',
@@ -129,8 +132,16 @@ app.get('/home', function(req, res) {
         res.send('Please login to view this page!');
     }
     res.end();
+  
+app.get("/", (req, res) => {
+    return res.sendFile(__dirname + '/frontend/index.html');
 });
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + 'frontend/index.html')
+})
 
 app.listen(port, () => {
     console.log("Server is running on port:", port)
 });
+
