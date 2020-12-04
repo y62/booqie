@@ -13,24 +13,32 @@
 
 <div class="container">
     <h2><%= title %></h2>
-    <a href="/add" class="btn btn-sm btn-primary">Add admin</a><br/><br/>
+    <a href="/user_registration" class="btn btn-sm btn-primary">Tilføj medlem</a><br/><br/>
     <table class="table table-dark table-striped">
         <thead>
         <tr>
-            <th>Name</th>
+            <th>Bruger ID</th>
+            <th>Navn</th>
+            <th>Alder</th>
+            <th>Køn</th>
+            <th>Adresse</th>
+            <th>Telefon</th>
             <th>Email</th>
-            <th>Phone No.</th>
             <th>Action</th>
         </tr>
         </thead>
         <tbody>
-        <% admins.forEach(function(admin){ %>
+        <% users.forEach(function(user){ %>
             <tr>
-                <td><%= admin.name %></td>
-                <td><%= admin.email %></td>
-                <td><%= admin.phone_no %></td>
+                <td><%= user.id %></td>
+                <td><%= user.name %></td>
+                <td><%= user.age %></td>
+                <td><%= user.gender %></td>
+                <td><%= user.address %></td>
+                <td><%= user.phone_number %></td>
+                <td><%= user.email %></td>
                 <td>
-                    <a href="delete/<%= admin.id %>" class="btn btn-sm btn-danger">Delete</a>
+                    <a href="delete/<%= user.id %>" class="btn btn-sm btn-danger">Delete</a>
                 </td>
             </tr>
         <% }); %>

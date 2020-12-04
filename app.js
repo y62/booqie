@@ -1,81 +1,67 @@
-const express = require("express");
+require('dotenv').config();
 
+const express = require("express");
 const mysql = require('mysql');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const path = require('path');
 const ejs = require('ejs');
-
-
 const nodemon = require("nodemon");
 const app = express();
-
 const port = 8080;
 
-
 app.use(express.static("frontend"));
-
-//____________________________________________________________________________
-
-/*app.get("/test", (req, res) => {
-    return res.sendFile(__dirname + "/frontend/test.html");
-}); */
-
-const connection = mysql.createConnection({
-    host: 'database-2.c8e4q2gd2tmb.eu-central-1.rds.amazonaws.com',
-    port: 3306,
-    user: 'admin',
-    password: '',
-    database: 'nodelogin'
-});
-
-connection.connect(function(error){
-    if(!!error) console.log(error);
-    else console.log('Database Connected!');
-});
-
-//set views file
+app.use(bodyParser.urlencoded({extended : true}));
+app.use(bodyParser.json());
 app.set('views',path.join(__dirname,'frontend/views'));
-
-//set view engine
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+const connection = mysql.createConnection({
+    host: process.env.HOST,
+    port: process.env.PORT,
+    user: process.env.DATAUSER,
+    password: process.env.DATAPASS,
+    database: process.env.DATABASE
+});
 
-//ADMIN CRUD______________________________________________________________
+connection.connect((error) => {
+    if (error) {
+        console.log(error);
+    }
+    else {
+        console.log('Database Connected!');
+    }
+});
 
-
-app.get('/add',(req, res) => {
-    res.render('admin_add', {
-        title : 'Create a booqie admin'
+app.get('/register',(req, res) => {
+    res.render('register_user', {
+        title : 'Booqie User registration'
     });
 });
 
-app.post('/save',(req, res) => {
-    let data = {name: req.body.name, email: req.body.email, phone_no: req.body.phone_no, password: req.body.password};
-    let sql = "INSERT INTO admins SET ?";
 
-    let query = connection.query(sql, data,(err, results) => {
+app.post('/save_user_registration',(req, res) => {
+    let data = {email: req.body.email, password: req.body.password, name: req.body.name, age: req.body.age, gender: req.body.gender, address: req.body.address, phone_number: req.body.phone_number};
+    let sql = "INSERT INTO users SET ?";
+        connection.query(sql, data,(err, results) => {
+        if (err) throw err;
+        res.redirect('/users');
+    });
+});
+
+
+app.get('/delete/:userId',(req, res) => {
+    const userId = req.params.userId;
+    let sql = `DELETE from users where id = ${userId}`;
+    connection.query(sql,(err, result) => {
         if(err) throw err;
-        res.redirect('/admins');
+        res.redirect('/users');
     });
 });
 
-app.get('/delete/:adminId',(req, res) => {
-    const adminId = req.params.adminId;
-    let sql = `DELETE from admins where id = ${adminId}`;
-    let query = connection.query(sql,(err, result) => {
-        if(err) throw err;
-        res.redirect('/admins');
-    });
-});
-
-app.get('/emailNotFound', (req, res) => {
-});
-
-
-//LOGIN_______________________________________________________________
+//SESSION_______________________________________________________________
 
 app.use(session({
     secret: 'secret',
@@ -83,65 +69,63 @@ app.use(session({
     saveUninitialized: true
 }));
 
-app.use(bodyParser.urlencoded({extended : true}));
-app.use(bodyParser.json());
-
-app.get('/', function(request, response) {
+app.get('/login', function(request, response) {
     response.sendFile(path.join(__dirname + '/frontend/login.html'));
 });
 
-app.post('/auth', function(req, res) {
+app.post('/auth', (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     if (email && password) {
-        connection.query('SELECT * FROM admins WHERE email = ? AND password = ?', [email, password], function(error, results, fields) {
+        connection.query('SELECT * FROM users WHERE email = ? AND password = ?', [email, password], (error, results, fields) => {
             if (results.length > 0) {
                 req.session.loggedin = true;
                 req.session.email = email;
-                res.redirect('/admins');
+                res.redirect('/home');
             } else {
-                res.send('Incorrect Email and/or Password!');
+                res.send('Forkert Email eller Adgangskode');
             }
             res.end();
         });
     } else {
-        response.send('Please enter Email and Password!');
-        response.end();
+        res.send('Please enter Email and Password!');
+        res.end();
     }
 });
 
-app.get('/admins',(req, res) => {
-   if (req.session.loggedin) {
-       let sql = "SELECT * FROM admins";
-       let query = connection.query(sql, (err, rows) => {
-           if (err) throw err;
-           res.render('admin_list', {
-               title: 'Welcome to booqie admin list',
-               admins: rows
-           });
-       });
-   } else {
-       console.log("cannot login")
-   }
+app.get('/users',(req, res) => {
+    if (req.session.loggedin) {
+        let sql = "SELECT * FROM users";
+        let query = connection.query(sql, (err, rows) => {
+            if (err) throw err;
+            res.render('user_list', {
+                title: 'Booqies aktive medlemmer',
+                users: rows
+            });
+        });
+    } else {
+        console.log("cannot login");
+    }
 });
 
-app.get('/home', function(req, res) {
+app.get('/home', (req, res) => {
     if (req.session.loggedin) {
-        res.send('Welcome back, ' + req.session.email + '!');
+        res.send('<h1> Velkommen, ' + req.session.email + '! </h1>');
     } else {
         res.send('Please login to view this page!');
+        //__dirname + '/frontend/login.html'
     }
     res.end();
-  
-app.get("/", (req, res) => {
-    return res.sendFile(__dirname + '/frontend/index.html');
 });
 
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + 'frontend/index.html')
-})
+app.get("/prices", (req, res) => {
+        return res.sendFile(__dirname + '/frontend/prices.html');
+    });
+
+app.get("/functionalities", (req, res) => {
+    return res.sendFile(__dirname + '/frontend/functionalities.html');
+});
 
 app.listen(port, () => {
-    console.log("Server is running on port:", port)
-});
-
+        console.log("Server is running on port:", port);
+    });
